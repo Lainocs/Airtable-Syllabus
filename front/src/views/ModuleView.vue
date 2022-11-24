@@ -303,7 +303,7 @@
 					})
 					}
 					this.form.seances.forEach((seance) => {
-						if (!seance.id) {
+						if (seance.New) {
 							this.$airtable(process.env.VUE_APP_AIRTABLE_SEANCES_TABLE).create(
 								[
 									{
@@ -347,17 +347,18 @@
 			},
 			addSeance() {
 				this.form.seances.push({
+					id: Math.random().toString(36).substring(7),
 					NumeroSeance: '',
 					Durée: '',
 					TravailPersonnel: '',
 					Thèmes: '',
 					Actions: '',
+					New: true,
 				})
 			},
 			deleteSeance(id) {
-				this.form.seances = this.form.seances.filter(
-					(seance) => seance.id != id
-				)
+				console.log(id)
+				this.form.seances = this.form.seances.filter((seance) => seance.id != id)
 			},
 		},
 		async created() {
