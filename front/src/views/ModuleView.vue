@@ -16,6 +16,7 @@
 					@input="emitSocket()"
 					id="objectif_general"
 					v-model="form.objectif_general"
+					:disabled="module.Complete == 'Complete'"
 				></textarea>
 			</div>
 
@@ -26,6 +27,7 @@
 					@input="emitSocket()"
 					id="objectifs_pedagogiques"
 					v-model="form.objectifs_pedagogiques"
+					:disabled="module.Complete == 'Complete'"
 				></textarea>
 			</div>
 
@@ -36,6 +38,7 @@
 					@input="emitSocket()"
 					id="pre_requis"
 					v-model="form.pre_requis"
+					:disabled="module.Complete == 'Complete'"
 				></textarea>
 			</div>
 
@@ -46,6 +49,7 @@
 					@input="emitSocket()"
 					id="bibliographie"
 					v-model="form.bibliographie"
+					:disabled="module.Complete == 'Complete'"
 				></textarea>
 			</div>
 
@@ -56,6 +60,7 @@
 					@input="emitSocket()"
 					id="competences_visees"
 					v-model="form.competences_visees"
+					:disabled="module.Complete == 'Complete'"
 				></textarea>
 			</div>
 
@@ -68,6 +73,7 @@
 							type="checkbox"
 							value="Enseignement en face à face"
 							v-model="form.methodes_pedagogiques"
+							:disabled="module.Complete == 'Complete'"
 							@change="emitSocket()"
 						/>
 						Enseignement en face à face
@@ -77,6 +83,7 @@
 							type="checkbox"
 							value="Pédagogie par projets"
 							v-model="form.methodes_pedagogiques"
+							:disabled="module.Complete == 'Complete'"
 							@change="emitSocket()"
 						/>
 						Pédagogie par projets
@@ -86,6 +93,7 @@
 							type="checkbox"
 							value="Pédagogie inversée"
 							v-model="form.methodes_pedagogiques"
+							:disabled="module.Complete == 'Complete'"
 							@change="emitSocket()"
 						/>
 						Pédagogie inversée
@@ -95,6 +103,7 @@
 							type="checkbox"
 							value="Blended Learning"
 							v-model="form.methodes_pedagogiques"
+							:disabled="module.Complete == 'Complete'"
 							@change="emitSocket()"
 						/>
 						Blended Learning
@@ -104,6 +113,7 @@
 							type="checkbox"
 							value="100% en ligne"
 							v-model="form.methodes_pedagogiques"
+							:disabled="module.Complete == 'Complete'"
 							@change="emitSocket()"
 						/>
 						100% en ligne
@@ -113,6 +123,7 @@
 							type="checkbox"
 							value="Autre"
 							v-model="form.methodes_pedagogiques"
+							:disabled="module.Complete == 'Complete'"
 							@change="emitSocket()"
 						/>
 						Autre
@@ -124,6 +135,7 @@
 						@input="emitSocket()"
 						id="autre"
 						v-model="form.autre"
+						:disabled="module.Complete == 'Complete'"
 					></textarea>
 				</div>
 			</div>
@@ -132,6 +144,7 @@
 					v-for="seance in form.seances"
 					:key="seance.id"
 					class="seance"
+					:disabled="module.Complete == 'Complete'"
 					@input="emitSocket()"
 				>
 					<label for="num_seance">Numéro de la séance :</label>
@@ -140,6 +153,7 @@
 						type="number"
 						id="num_seance"
 						v-model="seance.NumeroSeance"
+						:disabled="module.Complete == 'Complete'"
 					/>
 					<label for="duration_seance">Durée de la séance :</label>
 					<input
@@ -147,6 +161,7 @@
 						type="text"
 						id="duration_seance"
 						v-model="seance.Durée"
+						:disabled="module.Complete == 'Complete'"
 					/>
 					<label for="personal_work">Travail personnel :</label>
 					<input
@@ -154,18 +169,21 @@
 						type="text"
 						id="personal_work"
 						v-model="seance.TravailPersonnel"
+						:disabled="module.Complete == 'Complete'"
 					/>
 					<label for="themes">Thèmes</label>
 					<textarea
 						@input="emitSocket()"
 						id="themes"
 						v-model="seance.Thèmes"
+						:disabled="module.Complete == 'Complete'"
 					></textarea>
 					<label for="actions">Actions: </label>
 					<textarea
 						@input="emitSocket()"
 						id="actions"
 						v-model="seance.Actions"
+						:disabled="module.Complete == 'Complete'"
 					></textarea>
 					<!-- new seance button -->
 					<!-- delete seance button -->
@@ -173,6 +191,7 @@
 						type="button"
 						@click="deleteSeance(seance.id), emitSocket()"
 						class="delete_seance"
+						:disabled="module.Complete == 'Complete'"
 					>
 						-
 					</button>
@@ -181,6 +200,7 @@
 					type="button"
 					@click="addSeance(), emitSocket()"
 					class="add_seance"
+					:disabled="module.Complete == 'Complete'"
 				>
 					+
 				</button>
@@ -242,12 +262,23 @@
 			<!-- Send Button -->
 			<div>
 				<input
-					v-if="!submit"
+					v-if="!submit || !module.Complete == 'Complete'"
 					type="submit"
 					value="Enregistrer"
 					class="btn notsubmit"
+					:disabled="module.Complete == 'Complete'"
 				/>
-				<input v-else value="Enregistré" class="btn submit" />
+				<input v-else value="Enregistré" class="btn submit" :disabled="module.Complete == 'Complete'" />
+
+				<input
+					v-if="module.Complete != 'Complete'"
+					type="button"
+					@click="sendForm('completed')"
+					value="Terminer"
+					class="btn notcomplete"
+					:disabled="module.Complete == 'Complete'"
+				/>
+				<input v-else value="Terminé" class="btn completed" />
 			</div>
 		</form>
 	</div>
@@ -258,7 +289,7 @@
 		name: 'ModuleView',
 		data() {
 			return {
-				menu_status: 'seance',
+				menu_status: 'obj_gen',
 				form: {
 					methodes_pedagogiques: [],
 					seances: [],
@@ -269,7 +300,7 @@
 			}
 		},
 		methods: {
-			sendForm() {
+			sendForm(status) {
 				this.$airtable(process.env.VUE_APP_AIRTABLE_MODULE_TABLE).update([
 					{
 						id: this.module.module_id,
@@ -335,8 +366,18 @@
 							)
 						}
 					})
-
 				this.submit = true
+				if(status == 'completed') {
+					this.$airtable(process.env.VUE_APP_AIRTABLE_MODULE_TABLE).update([
+						{
+							id: this.module.module_id,
+							fields: {
+								Complete: 'Complete',
+							},
+						},
+					])
+					this.module.Complete = 'Complete'
+				}
 			},
 			emitSocket() {
 				this.submit = false
@@ -418,9 +459,7 @@
 
 					// Finish Loader
 					setTimeout(() => {
-						if(this.module.seance) {
-							this.module.seances.sort((a, b) => a.NumeroSeance - b.NumeroSeance)
-						}
+						this.module.seances?.sort((a, b) => a.NumeroSeance - b.NumeroSeance)
 						this.loaded = true
 					}, 2000)
 
@@ -437,8 +476,8 @@
 
 <style>
 	.active {
-		background-color: #2c3e50;
-		color: white;
+		background-color: #c7c7c7;
+		color: rgb(213, 9, 9);
 	}
 
 	div {
@@ -448,6 +487,7 @@
 		background-color: aliceblue;
 		padding: 0.5rem;
 		border-radius: 10px;
+		color: #505050;
 	}
 
 	textarea {
@@ -511,6 +551,16 @@
 
 	.notsubmit {
 		background-color: #2196f3;
+		color: white;
+	}
+
+	.completed {
+		background-color: #505050;
+		color: white;
+	}
+
+	.notcomplete {
+		background-color: #ed1d1d;
 		color: white;
 	}
 
