@@ -273,7 +273,7 @@
 				<input
 					v-if="module.Complete != 'Complete'"
 					type="button"
-					@click="sendForm('completed')"
+					@click="completeModule()"
 					value="Terminer"
 					class="btn notcomplete"
 					:disabled="module.Complete == 'Complete'"
@@ -401,6 +401,11 @@
 				console.log(id)
 				this.form.seances = this.form.seances.filter((seance) => seance.id != id)
 			},
+			completeModule() {
+				confirm('Êtes-vous sûr de vouloir valider ce module ?')
+					? this.sendForm('completed')
+					: null
+			}
 		},
 		async created() {
 			// Get module
