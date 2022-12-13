@@ -1,212 +1,19 @@
 <template>
-	<div v-if="loaded" class="module">
-		<h1>{{ module.Name }}</h1>
-		<span>{{ module.UE.Label }}</span>
-		<div class="time">
-			<p>{{ module.__Nb_jour_5h_ou_7h }} jours</p>
-			|
-			<p>{{ module.__Heures_TD }} h</p>
+	<div
+		v-if="loaded"
+		class="module"
+	>
+		<div class="title">
+			<h1>{{ module.Name }}</h1>
+			<span>{{ module.UE.Label }}</span>
+			<div class="time">
+				<p>{{ module.__Nb_jour_5h_ou_7h }} jours</p>
+				|
+				<p>{{ module.__Heures_TD }} h</p>
+			</div>
 		</div>
 
-		<form @submit.prevent="sendForm()">
-			<!-- Obj Gén -->
-			<div v-show="menu_status == 'obj_gen'">
-				<label for="objectif_general">Objectif Général :</label>
-				<textarea
-					@input="emitSocket()"
-					id="objectif_general"
-					v-model="form.objectif_general"
-					:disabled="module.Complete == 'Complete'"
-				></textarea>
-			</div>
-
-			<!-- Obj Pédago -->
-			<div v-show="menu_status == 'obj_peda'">
-				<label for="objectifs_pedagogiques">Contenu :</label>
-				<textarea
-					@input="emitSocket()"
-					id="objectifs_pedagogiques"
-					v-model="form.objectifs_pedagogiques"
-					:disabled="module.Complete == 'Complete'"
-				></textarea>
-			</div>
-
-			<!-- Pré-requis -->
-			<div v-show="menu_status == 'requis'">
-				<label for="pre_requis">Pré-requis :</label>
-				<textarea
-					@input="emitSocket()"
-					id="pre_requis"
-					v-model="form.pre_requis"
-					:disabled="module.Complete == 'Complete'"
-				></textarea>
-			</div>
-
-			<!-- Biblio -->
-			<div v-show="menu_status == 'biblio'">
-				<label for="bibliographie">Bibliographie :</label>
-				<textarea
-					@input="emitSocket()"
-					id="bibliographie"
-					v-model="form.bibliographie"
-					:disabled="module.Complete == 'Complete'"
-				></textarea>
-			</div>
-
-			<!-- Compétences Visées -->
-			<div v-show="menu_status == 'competences'">
-				<label for="competences_visees">Compétences Visées :</label>
-				<textarea
-					@input="emitSocket()"
-					id="competences_visees"
-					v-model="form.competences_visees"
-					:disabled="module.Complete == 'Complete'"
-				></textarea>
-			</div>
-
-			<!-- Méthodes Pédagogiques -->
-			<div v-show="menu_status == 'method'">
-				<label for="methodes_pedagogiques">Méthodes Pédagogiques :</label>
-				<div class="checkboxes">
-					<label>
-						<input
-							type="checkbox"
-							value="Enseignement en face à face"
-							v-model="form.methodes_pedagogiques"
-							:disabled="module.Complete == 'Complete'"
-							@change="emitSocket()"
-						/>
-						Enseignement en face à face
-					</label>
-					<label>
-						<input
-							type="checkbox"
-							value="Pédagogie par projets"
-							v-model="form.methodes_pedagogiques"
-							:disabled="module.Complete == 'Complete'"
-							@change="emitSocket()"
-						/>
-						Pédagogie par projets
-					</label>
-					<label>
-						<input
-							type="checkbox"
-							value="Pédagogie inversée"
-							v-model="form.methodes_pedagogiques"
-							:disabled="module.Complete == 'Complete'"
-							@change="emitSocket()"
-						/>
-						Pédagogie inversée
-					</label>
-					<label>
-						<input
-							type="checkbox"
-							value="Blended Learning"
-							v-model="form.methodes_pedagogiques"
-							:disabled="module.Complete == 'Complete'"
-							@change="emitSocket()"
-						/>
-						Blended Learning
-					</label>
-					<label>
-						<input
-							type="checkbox"
-							value="100% en ligne"
-							v-model="form.methodes_pedagogiques"
-							:disabled="module.Complete == 'Complete'"
-							@change="emitSocket()"
-						/>
-						100% en ligne
-					</label>
-					<label>
-						<input
-							type="checkbox"
-							value="Autre"
-							v-model="form.methodes_pedagogiques"
-							:disabled="module.Complete == 'Complete'"
-							@change="emitSocket()"
-						/>
-						Autre
-					</label>
-				</div>
-				<div v-if="form.methodes_pedagogiques?.includes('Autre')">
-					<label for="autre">Autre :</label>
-					<textarea
-						@input="emitSocket()"
-						id="autre"
-						v-model="form.autre"
-						:disabled="module.Complete == 'Complete'"
-					></textarea>
-				</div>
-			</div>
-			<div v-show="menu_status == 'seance'" class="seances">
-				<div
-					v-for="seance in form.seances"
-					:key="seance.id"
-					class="seance"
-					:disabled="module.Complete == 'Complete'"
-					@input="emitSocket()"
-				>
-					<label for="num_seance">Numéro de la séance :</label>
-					<input
-						@input="emitSocket()"
-						type="number"
-						id="num_seance"
-						v-model="seance.NumeroSeance"
-						:disabled="module.Complete == 'Complete'"
-					/>
-					<label for="duration_seance">Durée de la séance :</label>
-					<input
-						@input="emitSocket()"
-						type="text"
-						id="duration_seance"
-						v-model="seance.Durée"
-						:disabled="module.Complete == 'Complete'"
-					/>
-					<label for="personal_work">Travail personnel :</label>
-					<input
-						@input="emitSocket()"
-						type="text"
-						id="personal_work"
-						v-model="seance.TravailPersonnel"
-						:disabled="module.Complete == 'Complete'"
-					/>
-					<label for="themes">Thèmes</label>
-					<textarea
-						@input="emitSocket()"
-						id="themes"
-						v-model="seance.Thèmes"
-						:disabled="module.Complete == 'Complete'"
-					></textarea>
-					<label for="actions">Actions: </label>
-					<textarea
-						@input="emitSocket()"
-						id="actions"
-						v-model="seance.Actions"
-						:disabled="module.Complete == 'Complete'"
-					></textarea>
-					<!-- new seance button -->
-					<!-- delete seance button -->
-					<button
-						type="button"
-						@click="deleteSeance(seance.id), emitSocket()"
-						class="delete_seance"
-						:disabled="module.Complete == 'Complete'"
-					>
-						-
-					</button>
-				</div>
-				<button
-					type="button"
-					@click="addSeance(), emitSocket()"
-					class="add_seance"
-					:disabled="module.Complete == 'Complete'"
-				>
-					+
-				</button>
-			</div>
-
-			<!-- Boutons -->
+		<div id="container">
 			<div class="buttons">
 				<button
 					type="button"
@@ -258,29 +65,249 @@
 					Déroulement du module
 				</button>
 			</div>
+			<form @submit.prevent="sendForm()">
+				<!-- Obj Gén -->
+				<div v-show="menu_status == 'obj_gen'">
+					<label for="objectif_general">Objectif Général :</label>
+					<textarea
+						@input="emitSocket()"
+						id="objectif_general"
+						v-model="form.objectif_general"
+						:disabled="module.Complete == 'Complete'"
+					></textarea>
+				</div>
 
-			<!-- Send Button -->
-			<div>
-				<input
-					v-if="!submit || !module.Complete == 'Complete'"
-					type="submit"
-					value="Enregistrer"
-					class="btn notsubmit"
-					:disabled="module.Complete == 'Complete'"
-				/>
-				<input v-else value="Enregistré" class="btn submit" :disabled="module.Complete == 'Complete'" />
+				<!-- Obj Pédago -->
+				<div v-show="menu_status == 'obj_peda'">
+					<label for="objectifs_pedagogiques">Contenu :</label>
+					<textarea
+						@input="emitSocket()"
+						id="objectifs_pedagogiques"
+						v-model="form.objectifs_pedagogiques"
+						:disabled="module.Complete == 'Complete'"
+					></textarea>
+				</div>
 
-				<input
-					v-if="module.Complete != 'Complete'"
-					type="button"
-					@click="completeModule()"
-					value="Terminer"
-					class="btn notcomplete"
-					:disabled="module.Complete == 'Complete'"
-				/>
-				<input v-else value="Terminé" class="btn completed" />
-			</div>
-		</form>
+				<!-- Pré-requis -->
+				<div v-show="menu_status == 'requis'">
+					<label for="pre_requis">Pré-requis :</label>
+					<textarea
+						@input="emitSocket()"
+						id="pre_requis"
+						v-model="form.pre_requis"
+						:disabled="module.Complete == 'Complete'"
+					></textarea>
+				</div>
+
+				<!-- Biblio -->
+				<div v-show="menu_status == 'biblio'">
+					<label for="bibliographie">Bibliographie :</label>
+					<textarea
+						@input="emitSocket()"
+						id="bibliographie"
+						v-model="form.bibliographie"
+						:disabled="module.Complete == 'Complete'"
+					></textarea>
+				</div>
+
+				<!-- Compétences Visées -->
+				<div v-show="menu_status == 'competences'">
+					<label for="competences_visees">Compétences Visées :</label>
+					<textarea
+						@input="emitSocket()"
+						id="competences_visees"
+						v-model="form.competences_visees"
+						:disabled="module.Complete == 'Complete'"
+					></textarea>
+				</div>
+
+				<!-- Méthodes Pédagogiques -->
+				<div v-show="menu_status == 'method'">
+					<label for="methodes_pedagogiques">Méthodes Pédagogiques :</label>
+					<div class="checkboxes">
+						<label>
+							<input
+								type="checkbox"
+								value="Enseignement en face à face"
+								v-model="form.methodes_pedagogiques"
+								:disabled="module.Complete == 'Complete'"
+								@change="emitSocket()"
+							/>
+							Enseignement en face à face
+						</label>
+						<label>
+							<input
+								type="checkbox"
+								value="Pédagogie par projets"
+								v-model="form.methodes_pedagogiques"
+								:disabled="module.Complete == 'Complete'"
+								@change="emitSocket()"
+							/>
+							Pédagogie par projets
+						</label>
+						<label>
+							<input
+								type="checkbox"
+								value="Pédagogie inversée"
+								v-model="form.methodes_pedagogiques"
+								:disabled="module.Complete == 'Complete'"
+								@change="emitSocket()"
+							/>
+							Pédagogie inversée
+						</label>
+						<label>
+							<input
+								type="checkbox"
+								value="Blended Learning"
+								v-model="form.methodes_pedagogiques"
+								:disabled="module.Complete == 'Complete'"
+								@change="emitSocket()"
+							/>
+							Blended Learning
+						</label>
+						<label>
+							<input
+								type="checkbox"
+								value="100% en ligne"
+								v-model="form.methodes_pedagogiques"
+								:disabled="module.Complete == 'Complete'"
+								@change="emitSocket()"
+							/>
+							100% en ligne
+						</label>
+						<label>
+							<input
+								type="checkbox"
+								value="Autre"
+								v-model="form.methodes_pedagogiques"
+								:disabled="module.Complete == 'Complete'"
+								@change="emitSocket()"
+							/>
+							Autre
+						</label>
+					</div>
+					<div v-if="form.methodes_pedagogiques?.includes('Autre')">
+						<label for="autre">Autre :</label>
+						<textarea
+							@input="emitSocket()"
+							id="autre"
+							v-model="form.autre"
+							:disabled="module.Complete == 'Complete'"
+						></textarea>
+					</div>
+				</div>
+				<div
+					v-show="menu_status == 'seance'"
+					class="seances"
+				>
+					<div
+						v-for="seance in form.seances"
+						:key="seance.id"
+						class="seance"
+						:disabled="module.Complete == 'Complete'"
+						@input="emitSocket()"
+					>
+						<div class="num_seance">
+							<label for="num_seance">Numéro de la séance :</label>
+							<input
+								@input="emitSocket()"
+								type="number"
+								id="num_seance"
+								v-model="seance.NumeroSeance"
+								:disabled="module.Complete == 'Complete'"
+							/>
+						</div>
+						<div class="duration_seance">
+							<label for="duration_seance">Durée de la séance :</label>
+							<input
+								@input="emitSocket()"
+								type="time"
+								id="duration_seance"
+								v-model="seance.Durée"
+								:disabled="module.Complete == 'Complete'"
+							/>
+						</div>
+						<div class="personal_work">
+							<label for="personal_work">Travail personnel :</label>
+							<input
+								@input="emitSocket()"
+								type="text"
+								id="personal_work"
+								v-model="seance.TravailPersonnel"
+								:disabled="module.Complete == 'Complete'"
+							/>
+						</div>
+						<div class="themes">
+							<label for="themes">Thèmes</label>
+							<input
+								@input="emitSocket()"
+								id="themes"
+								v-model="seance.Thèmes"
+								:disabled="module.Complete == 'Complete'"
+							/>
+						</div>
+						<div class="actions">
+							<label for="actions">Actions: </label>
+							<input
+								@input="emitSocket()"
+								id="actions"
+								v-model="seance.Actions"
+								:disabled="module.Complete == 'Complete'"
+							/>
+						</div>
+						<!-- new seance button -->
+						<!-- delete seance button -->
+						<button
+							type="button"
+							@click="deleteSeance(seance.id), emitSocket()"
+							class="delete_seance"
+							:disabled="module.Complete == 'Complete'"
+						>
+							Retirer la séance -
+						</button>
+					</div>
+					<button
+						type="button"
+						@click="addSeance(), emitSocket()"
+						class="add_seance"
+						:disabled="module.Complete == 'Complete'"
+					>
+						Nouvelle Seance +
+					</button>
+				</div>
+
+				<!-- Send Button -->
+				<div class="send_buttons">
+					<input
+						v-if="!submit || !module.Complete == 'Complete'"
+						type="submit"
+						value="Enregistrer"
+						class="btn notsubmit"
+						:disabled="module.Complete == 'Complete'"
+					/>
+					<input
+						v-else
+						value="Enregistré"
+						class="btn submit"
+						:disabled="module.Complete == 'Complete'"
+					/>
+
+					<input
+						v-if="module.Complete != 'Complete'"
+						type="button"
+						@click="completeModule()"
+						value="Soumettre le syllabus"
+						class="btn notcomplete"
+						:disabled="module.Complete == 'Complete'"
+					/>
+					<input
+						v-else
+						value="Soumis"
+						class="btn completed"
+					/>
+				</div>
+			</form>
+		</div>
 	</div>
 </template>
 
@@ -308,7 +335,7 @@
 							'Objectifs Pedagogiques': this.form.objectifs_pedagogiques,
 							'Objectif General': this.form.objectif_general,
 							'Pre-requis': this.form.pre_requis,
-							'Bibliographie': this.form.bibliographie,
+							Bibliographie: this.form.bibliographie,
 							'Competences Visees': this.form.competences_visees,
 							'Methodes Pedagogiques': this.form.methodes_pedagogiques,
 							'Autre Methode Pedagogique':
@@ -318,56 +345,54 @@
 						},
 					},
 				])
-					// Send seances
-					if(this.module.seances) {
-						this.module.seances.forEach((db_seance) => {
+				// Send seances
+				if (this.module.seances) {
+					this.module.seances.forEach((db_seance) => {
 						if (
 							!this.form.seances.some(
 								(form_seance) => form_seance.id == db_seance.id
 							)
 						) {
-							this.$airtable(process.env.VUE_APP_AIRTABLE_SEANCES_TABLE).destroy([db_seance.id])
+							this.$airtable(
+								process.env.VUE_APP_AIRTABLE_SEANCES_TABLE
+							).destroy([db_seance.id])
 							this.module.seances = this.module.seances.filter(
 								(seance) => seance.id != db_seance.id
 							)
 						}
 					})
+				}
+				this.form.seances.forEach((seance) => {
+					if (seance.New) {
+						this.$airtable(process.env.VUE_APP_AIRTABLE_SEANCES_TABLE).create([
+							{
+								fields: {
+									NumeroSeance: seance.NumeroSeance,
+									Durée: seance.Durée,
+									TravailPersonnel: seance.TravailPersonnel,
+									Thèmes: seance.Thèmes,
+									Actions: seance.Actions,
+									Module: [this.module.module_id],
+								},
+							},
+						])
+					} else {
+						this.$airtable(process.env.VUE_APP_AIRTABLE_SEANCES_TABLE).update([
+							{
+								id: seance.id,
+								fields: {
+									NumeroSeance: seance.NumeroSeance,
+									Durée: seance.Durée,
+									TravailPersonnel: seance.TravailPersonnel,
+									Thèmes: seance.Thèmes,
+									Actions: seance.Actions,
+								},
+							},
+						])
 					}
-					this.form.seances.forEach((seance) => {
-						if (seance.New) {
-							this.$airtable(process.env.VUE_APP_AIRTABLE_SEANCES_TABLE).create(
-								[
-									{
-										fields: {
-											NumeroSeance: seance.NumeroSeance,
-											Durée: seance.Durée,
-											TravailPersonnel: seance.TravailPersonnel,
-											Thèmes: seance.Thèmes,
-											Actions: seance.Actions,
-											Module: [this.module.module_id],
-										},
-									},
-								]
-							)
-						} else {
-							this.$airtable(process.env.VUE_APP_AIRTABLE_SEANCES_TABLE).update(
-								[
-									{
-										id: seance.id,
-										fields: {
-											NumeroSeance: seance.NumeroSeance,
-											Durée: seance.Durée,
-											TravailPersonnel: seance.TravailPersonnel,
-											Thèmes: seance.Thèmes,
-											Actions: seance.Actions,
-										},
-									},
-								]
-							)
-						}
-					})
+				})
 				this.submit = true
-				if(status == 'completed') {
+				if (status == 'completed') {
 					this.$airtable(process.env.VUE_APP_AIRTABLE_MODULE_TABLE).update([
 						{
 							id: this.module.module_id,
@@ -389,7 +414,7 @@
 			addSeance() {
 				this.form.seances.push({
 					id: Math.random().toString(36).substring(7),
-					NumeroSeance: '',
+					NumeroSeance: this.form.seances.length + 1,
 					Durée: '',
 					TravailPersonnel: '',
 					Thèmes: '',
@@ -399,13 +424,15 @@
 			},
 			deleteSeance(id) {
 				console.log(id)
-				this.form.seances = this.form.seances.filter((seance) => seance.id != id)
+				this.form.seances = this.form.seances.filter(
+					(seance) => seance.id != id
+				)
 			},
 			completeModule() {
 				confirm('Êtes-vous sûr de vouloir valider ce module ?')
 					? this.sendForm('completed')
 					: null
-			}
+			},
 		},
 		async created() {
 			// Get module
@@ -450,7 +477,7 @@
 									console.error(err)
 									return
 								}
-								if(!record || !record.fields) return
+								if (!record || !record.fields) return
 								record.fields.id = record.id
 								this.module.seances.push(record.fields)
 								this.module.seances.splice(
@@ -460,7 +487,6 @@
 							}
 						)
 					})
-					
 
 					// Finish Loader
 					setTimeout(() => {
@@ -480,9 +506,23 @@
 </script>
 
 <style>
-	.active {
-		background-color: #c7c7c7;
-		color: rgb(213, 9, 9);
+	.title {
+		margin-top: 50px;
+		font-size: 1.2rem;
+		font-weight: 600;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 10px;
+		margin-bottom: 20px;
+	}
+
+	#container {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-evenly;
+		margin-top: 80px;
 	}
 
 	div {
@@ -491,12 +531,12 @@
 	span {
 		background-color: aliceblue;
 		padding: 0.5rem;
-		border-radius: 10px;
+		border-radius: 5px;
 		color: #505050;
 	}
 
 	textarea {
-		border-radius: 10px;
+		border-radius: 5px;
 		padding: 20px;
 		box-shadow: 4px 8px 8px;
 		width: 100%;
@@ -510,41 +550,77 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		width: 50%;
+		width: 60%;
 	}
 
 	.buttons {
+		position: sticky;
+		top: 50px;
 		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-		width: 100%;
+		flex-direction: column;
+		align-items: center;
+		gap: 20px;
+		justify-content: center;
+		width: 30%;
 	}
 
 	.buttons button {
-		width: calc(100% / 6);
-		padding: 10px;
-		border-radius: 10px;
+		width: 80%;
+		margin: 0 auto;
+		padding: 20px;
+		border-radius: 5px;
 		background-color: #f2f2f2;
 		border: none;
 	}
 
+	.active {
+		background-color: #485a71 !important;
+		color: #f2f2f2;
+
+	}
+
+	.buttons button:hover {
+		background-color: #485a71;
+		color: #f2f2f2;
+	}
+
 	form label {
-		align-self: flex-start;
-		padding: 20px 0;
+		font-size: 1rem;
+		font-weight: 600;
 	}
 
 	.checkboxes {
-		/* 2 per row checkboxes aligned to the left */
+		padding: 50px 0;
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
-		grid-gap: 20px;
+		gap: 20px;
+		justify-items: start;
+	}
+
+	.checkboxes label {
+		font-size: 1rem;
+		font-weight: 400;
+	}
+
+	.checkboxes input {
+		margin-right: 10px;
+		height: 20px;
+		width: 20px;
+		border-radius: 5px;
+	}
+
+	.send_buttons {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 20px;
 	}
 
 	.btn {
-		width: 30vw;
+		width: 20vw;
 		margin-top: 20px;
 		padding: 10px;
-		border-radius: 10px;
+		border-radius: 5px;
 		border: none;
 		text-align: center;
 	}
@@ -581,7 +657,7 @@
 		flex-direction: column;
 		align-items: flex-start;
 		justify-content: space-around;
-		border-radius: 10px;
+		border-radius: 5px;
 		padding: 20px;
 		box-shadow: 4px 8px 8px;
 		width: 100%;
@@ -612,9 +688,31 @@
 		flex-direction: column;
 		align-items: flex-start;
 		justify-content: space-around;
-		border-radius: 10px;
+		border-radius: 5px;
 		padding: 20px;
 		width: 100%;
-		margin-bottom: 500px;
 	}
+
+	.add_seance, .delete_seance {
+		padding: 10px 20px;
+		border-radius: 5px;
+		border: 1px solid #505050;
+		margin-bottom: 50px;
+	}
+
+	.add_seance:hover, .delete_seance:hover {
+		background-color: #505050;
+		color: white;
+	}
+
+	.num_seance, .duration_seance, .personal_work, .themes, .actions {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 10px;
+	}
+
+
+
+
 </style>
