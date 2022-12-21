@@ -8,14 +8,16 @@ import { io } from 'socket.io-client'
 document.title = 'Fiche Module'
 
 const app = createApp(App)
+
 app.use(router)
-app.config.globalProperties.$airtable = new Airtable({
-	apiKey: process.env.VUE_APP_AIRTABLE_API_KEY,
-}).base(process.env.VUE_APP_AIRTABLE_BASE)
 
 app.config.globalProperties.$socket = io(process.env.VUE_APP_SOCKET_DSN, {
 	secure: true,
 	rejectUnauthorized: false,
 })
+
+app.config.globalProperties.$airtable = new Airtable({
+	apiKey: process.env.VUE_APP_AIRTABLE_API_KEY,
+}).base(process.env.VUE_APP_AIRTABLE_BASE)
 
 app.mount('#app')
