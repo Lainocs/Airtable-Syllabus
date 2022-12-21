@@ -14,7 +14,7 @@ app.use(router)
 app.config.globalProperties.$socket = io(process.env.VUE_APP_SOCKET_DSN, {
 	secure: true,
 	rejectUnauthorized: false,
-  transports: ['polling'],
+  transports: ['websocket', 'polling'],
 })
 
 app.config.globalProperties.$airtable = new Airtable({
