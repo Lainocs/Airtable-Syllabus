@@ -1,4 +1,5 @@
-const { Server } = require("socket.io")
+import { Server } from "socket.io"
+import * as dotenv from "dotenv"
 
 const io = new Server({
   cors: {
@@ -6,6 +7,7 @@ const io = new Server({
   }
 })
 
+dotenv.config()
 
 io.on("connection", (socket) => {
   console.log("connected")
@@ -15,4 +17,4 @@ io.on("connection", (socket) => {
   })
 })
 
-io.listen(3000)
+io.listen(process.env.PORT || 3000)
