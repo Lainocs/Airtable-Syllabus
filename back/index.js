@@ -7,7 +7,11 @@ const io = new Server({
   }
 })
 
-dotenv.config()
+dotenv.config({
+  path: "./.env.local",
+  override: true,
+})
+
 
 io.on("connection", (socket) => {
   console.log("connected")
@@ -17,4 +21,6 @@ io.on("connection", (socket) => {
   })
 })
 
-io.listen(process.env.PORT || 3000)
+io.listen(process.env.PORT, () => {
+  console.log(`listening on port ${process.env.PORT}`)
+})
