@@ -4,6 +4,8 @@ import router from './router'
 import Airtable from 'airtable'
 import {io} from 'socket.io-client'
 
+// title 
+document.title = 'Fiche Module'
 
 const app = createApp(App)
 app.use(router)
