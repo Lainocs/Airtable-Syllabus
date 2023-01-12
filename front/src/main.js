@@ -13,8 +13,6 @@ app.use(router)
 
 app.config.globalProperties.$socket = io(process.env.VUE_APP_SOCKET_DSN, {
 	path: '/socket.io',
-	transports: ['polling'],
-	EIO: 4,
 })
 
 app.config.globalProperties.$airtable = new Airtable({
